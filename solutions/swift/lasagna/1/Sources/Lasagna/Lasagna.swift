@@ -1,0 +1,1 @@
+func expectedMinutesInOven() = 40
