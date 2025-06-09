@@ -1,0 +1,54 @@
+/// # Panics
+/// When each rows of `minefield` don't have equal length.
+/// When the result is in unreachable state. i.e. some grid has 9 or more neighboring mines
+#[must_use]
+pub fn annotate(minefield: &[&str]) -> Vec<String> {
+    if minefield.is_empty() {
+        return vec![];
+    }
+
+    if minefield[0].is_empty() {
+        return vec![String::new()];
+    }
+
+    let row_size = minefield.len();
+    let col_size = minefield[0].len();
+
+    if minefield.iter().any(|s| {
+        s.len() != col_size
+    }) {
+        unreachable!("input length is not equal");
+    }
+
+    let byte_minefield = minefield.iter()
+        .map(|row| row.as_bytes())
+        .collect::<Vec<_>>();
+
+    (0..row_size)
+        .map(|i| {
+            (0..col_size)
+                .map(|j| {
+                    if byte_minefield[i][j] == b'*' {
+                        return '*';
+                    }
+                    let mine_cnt_result = (i.saturating_sub(1)..i.saturating_add(2).min(row_size))
+                        .flat_map(|x| {
+                            let byte_minefield = &byte_minefield;
+                            (j.saturating_sub(1)..j.saturating_add(2).min(col_size))
+                                .filter(move |&y| {
+                                    !(x == i && y == j)
+                                    && byte_minefield[x][y] == b'*'
+                                })
+                        })
+                        .fold(0, |acc, _| acc + 1);
+                    match mine_cnt_result {
+                        0 => ' ',
+                        byt @ 1..=8 => char::from_digit(byt, 10)
+                            .expect("conversion error here is unreachable"),
+                        _ => unreachable!("a grid should only have 0 - 8 mines nearby")
+                    }
+                })
+                .collect()
+        })
+        .collect()
+}
