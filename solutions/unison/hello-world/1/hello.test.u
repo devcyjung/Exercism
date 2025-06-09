@@ -1,0 +1,9 @@
+hello.test = verify do
+  labeled "should return 'Hello, World!'" do
+    expected = "Hello, World!"
+    actual = hello
+    label "expected" expected
+    label "actual" actual
+    ensureEqual expected actual
+
+test> hello.tests = hello.test
