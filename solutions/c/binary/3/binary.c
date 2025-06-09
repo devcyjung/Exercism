@@ -1,0 +1,23 @@
+#include "binary.h"
+#include <stddef.h>
+
+int convert(const char *const input) {
+    int acc = 0;
+    size_t index = 0;
+    char cur = '\0';
+    while ((cur = input[index]) != '\0') {
+        ++index;
+        switch (cur) {
+        case '0':
+            acc <<= 1;
+            break;
+        case '1':
+            acc <<= 1;
+            acc |= 1;
+            break;
+        default:
+            return INVALID;
+        }
+    }
+    return acc;
+}
